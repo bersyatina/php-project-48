@@ -1,5 +1,10 @@
 {
     "name": "hexlet/code",
+    "autoload": {
+        "files": [
+            "src/Gendiff.php"
+        ]
+    },
     "description": "Calculator of differences between files .xml and .json",
     "type": "project",
     "require": {
@@ -12,16 +17,14 @@
         "docopt/docopt": "^1.0"
     },
     "license": "MIT",
-    "autoload": {
-        "psr-4": {
-            "Hexlet\\Code\\": "src/"
-        }
-    },
     "authors": [
         {
             "name": "Apanasenko Andrey",
             "email": "aw_apanasenko@mail.ru"
         }
+    ],
+    "bin": [
+        "bin/gendiff"
     ],
     "config": {
         "allow-plugins": {
