@@ -4,6 +4,8 @@ namespace Gendiff;
 
 use Docopt;
 
+function getHelp()
+{
     $doc = <<<DOCOPT
 Generate diff
 
@@ -21,3 +23,5 @@ DOCOPT;
     $result = Docopt::handle($doc, array('version'=>'1.0.0rc2'));
     foreach ($result as $k=>$v)
         echo $k.': '.json_encode($v).PHP_EOL;
+}
+    

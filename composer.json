@@ -2,7 +2,8 @@
     "name": "hexlet/code",
     "autoload": {
         "files": [
-            "src/Gendiff.php"
+            "src/Gendiff.php",
+            "src/Differ/Differ.php"
         ]
     },
     "description": "Calculator of differences between files .xml and .json",
@@ -24,6 +25,7 @@
         }
     ],
     "bin": [
+        "bin/gendiff-help",
         "bin/gendiff"
     ],
     "config": {
