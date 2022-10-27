@@ -2,27 +2,6 @@
 
 namespace Differ\Differ;
 
-use Docopt;
-
-$doc = <<<DOCOPT
-Generate diff
-
-Usage:
-  gendiff (-h|--help)
-  gendiff (-v|--version)
-  gendiff [--format <fmt>] <firstFile> <secondFile>
-  
-Options:
-  -h --help                     Show this screen
-  -v --version                  Show version
-  --format <fmt>                Report format [default: stylish]
-DOCOPT;
-
-$result = Docopt::handle($doc, array('version'=>'1.0.0rc2'));
-foreach ($result as $k=>$v)
-    echo $k.': '.json_encode($v).PHP_EOL;
-
-
 function decode($pathToFile)
 {
     if (is_file($pathToFile)) {
@@ -54,13 +33,13 @@ function getComparison($first = [], $second = []): array
     ];
     switch ($arrayValues) {
         case $arrayValues['first'] !== [] && $arrayValues['second'] === []:
-            $result[] = getArray($first, '-');
+            $result[] = \Differ\Differ\getArray($first, '-');
             break;
         case $arrayValues['first'] === [] && $arrayValues['second'] !== []:
             $result[] = getArray($second, '+');
             break;
         case $arrayValues['first'] !== [] && $arrayValues['second'] !== []:
-            if (getValue($arrayValues['first']) === getValue($arrayValues['second'])){
+            if (\Differ\Differ\getValue($arrayValues['first']) === getValue($arrayValues['second'])) {
                 $result[] = getArray($first, ' ');
                 break;
             }
@@ -76,7 +55,7 @@ function genDiff(string $firstFile, string $secondFile, $format = null): void
 {
     $pathToFiles = dirname(__DIR__, 1) . '/files/';
 
-    $firstFileArr = decode($pathToFiles . $firstFile);
+    $firstFileArr = \Differ\Differ\decode($pathToFiles . $firstFile);
     $secondFileArr = decode($pathToFiles . $secondFile);
 
     $filesKeys = array_unique(array_merge(array_keys($firstFileArr), array_keys($secondFileArr)));
@@ -84,9 +63,9 @@ function genDiff(string $firstFile, string $secondFile, $format = null): void
 
     $result = [];
     foreach ($filesKeys as $key => $value) {
-        $first = array_key_exists($value, $firstFileArr) ? [$value, $firstFileArr[$value]]: [];
-        $second = array_key_exists($value, $secondFileArr) ? [$value, $secondFileArr[$value]]: [];
-        $arrayComparison = getComparison($first, $second);
+        $first = array_key_exists($value, $firstFileArr) ? [$value, $firstFileArr[$value]] : [];
+        $second = array_key_exists($value, $secondFileArr) ? [$value, $secondFileArr[$value]] : [];
+        $arrayComparison = \Differ\Differ\getComparison($first, $second);
         $result[] = $arrayComparison;
     }
     $result = array_merge(...$result);
