@@ -51,21 +51,21 @@ function getComparison($first = [], $second = []): array
     return $result;
 }
 
-function genDiff(string $firstFile, string $secondFile, $format = null): void
+function genDiff(string $firstFile, string $secondFile): void
 {
     $pathToFiles = dirname(__DIR__, 1) . '/files/';
 
-    $firstFileArr = \Differ\Differ\decode($pathToFiles . $firstFile);
+    $firstFileArr = decode($pathToFiles . $firstFile);
     $secondFileArr = decode($pathToFiles . $secondFile);
 
     $filesKeys = array_unique(array_merge(array_keys($firstFileArr), array_keys($secondFileArr)));
     sort($filesKeys);
 
     $result = [];
-    foreach ($filesKeys as $key => $value) {
+    foreach ($filesKeys as $value) {
         $first = array_key_exists($value, $firstFileArr) ? [$value, $firstFileArr[$value]] : [];
         $second = array_key_exists($value, $secondFileArr) ? [$value, $secondFileArr[$value]] : [];
-        $arrayComparison = \Differ\Differ\getComparison($first, $second);
+        $arrayComparison = getComparison($first, $second);
         $result[] = $arrayComparison;
     }
     $result = array_merge(...$result);

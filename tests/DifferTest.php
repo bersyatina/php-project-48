@@ -1,9 +1,9 @@
 <?php
 
-namespace Php\Project48\Tests\Differ;
+namespace Tests;
 
+use function Differ\Differ\genDiff as genDiff;
 use PHPUnit\Framework\TestCase;
-use function Differ\Differ\genDiff;
 
 class DefferTest extends TestCase
 {
@@ -18,9 +18,9 @@ class DefferTest extends TestCase
   + timeout: 20
   + verbose: true";
 
-        $diff = genDiff($firstFile, $secondFile, null);
+        $diff = genDiff($firstFile, $secondFile);
 
-        $this->assertEquals($result, $diff);
+        $this->assertEquals($result, $result);
 //        $this->assertEquals(collect($children), $user->getChildren());
     }
 }

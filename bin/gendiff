@@ -28,4 +28,4 @@ if ($argc === 3) {
     print_r('Введены неверные аргументы функции!');
 }
 
-genDiff($firstFile, $secondFile, $format);
+genDiff($firstFile, $secondFile);

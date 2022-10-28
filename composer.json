@@ -3,7 +3,8 @@
     "autoload": {
         "files": [
             "src/Gendiff.php",
-            "src/Differ/Differ.php"
+            "src/Differ/Differ.php",
+            "tests/DifferTest.php"
         ]
     },
     "description": "Calculator of differences between files .xml and .json",

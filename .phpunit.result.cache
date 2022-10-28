@@ -1,0 +1,1 @@
+C:37:"PHPUnit\Runner\DefaultTestResultCache":258:{a:2:{s:7:"defects";a:2:{s:50:"Php\Project48\Tests\Differ\DefferTest::testGenDiff";i:4;s:29:"Tests\DefferTest::testGenDiff";i:4;}s:5:"times";a:2:{s:50:"Php\Project48\Tests\Differ\DefferTest::testGenDiff";d:0.001;s:29:"Tests\DefferTest::testGenDiff";d:0.001;}}}
