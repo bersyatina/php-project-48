@@ -51,7 +51,7 @@ function getComparison($first = [], $second = []): array
     return $result;
 }
 
-function genDiff(string $firstFile, string $secondFile): void
+function genDiff(string $firstFile, string $secondFile, string $format)
 {
     $pathToFiles = dirname(__DIR__, 1) . '/files/';
 
@@ -72,13 +72,13 @@ function genDiff(string $firstFile, string $secondFile): void
 
     $res = "";
     foreach ($result as $item) {
-        $res .= $item[0] . " " . json_encode([$item[1] => $item[2]]);
+        $res .= $item[0] . " " . str_replace('"', "", json_encode([$item[1] => $item[2]]));
     }
     $res .= "";
 
-    $res = str_replace("}", ",\n", $res);
+    $res = str_replace("}", "\r\n", $res);
     $res = str_replace("{", "", $res);
     $res = str_replace(":", ": ", $res);
 
-    print_r($res);
+    return $res;
 }

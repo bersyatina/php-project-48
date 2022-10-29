@@ -11,21 +11,23 @@ if (file_exists($autoloadPath1)) {
     require_once $autoloadPath2;
 }
 
-$format = null;
+    $doc = <<<DOCOPT
+Generate diff
 
-if ($argc === 3) {
-    $firstFile = $argv[1];
-    $secondFile = $argv[2];
-} elseif ($argc === 4) {
-    $format = $argv[1];
-    $firstFile = $argv[2];
-    $secondFile = $argv[3];
-} elseif ($argc === 5) {
-    $format = $argv[2];
-    $firstFile = $argv[3];
-    $secondFile = $argv[4];
-} else {
-    print_r('Введены неверные аргументы функции!');
-}
+Usage:
+  gendiff (-h|--help)
+  gendiff (-v|--version)
+  gendiff [--format <fmt>] <firstFile> <secondFile>
 
-genDiff($firstFile, $secondFile);
+Options:
+  -h --help                     Show this screen
+  -v --version                  Show version
+  --format <fmt>                Report format [default: stylish]
+DOCOPT;
+
+    $result = Docopt::handle($doc, array('version' => '1.0.0rc2'));
+    $firstFile = $result['<firstFile>'];
+    $secondFile = $result['<secondFile>'];
+    $format = $result['--format'];
+
+genDiff($firstFile, $secondFile, $format);

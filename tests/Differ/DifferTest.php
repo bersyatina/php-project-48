@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests;
+namespace Tests\Differ;
 
-use function Differ\Differ\genDiff as genDiff;
+use function \Differ\Differ\genDiff as genDiff;
 use PHPUnit\Framework\TestCase;
 
-class DefferTest extends TestCase
+class DifferTest extends TestCase
 {
     public function testGenDiff(): void
     {
@@ -18,9 +18,9 @@ class DefferTest extends TestCase
   + timeout: 20
   + verbose: true";
 
-        $diff = genDiff($firstFile, $secondFile);
+        $diff = genDiff($firstFile, $secondFile, 'json');
 
-        $this->assertEquals($result, $result);
+        $this->assertEquals($diff, $result);
 //        $this->assertEquals(collect($children), $user->getChildren());
     }
 }
