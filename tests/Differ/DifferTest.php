@@ -11,12 +11,14 @@ class DifferTest extends TestCase
     {
         $firstFile = 'file1.json';
         $secondFile = 'file2.json';
-        $result = "- follow: false
+        $result = "{
+  - follow: false
     host: hexlet.io
   - proxy: 123.234.53.22
   - timeout: 50
   + timeout: 20
-  + verbose: true";
+  + verbose: true
+}";
 
         $diff = genDiff($firstFile, $secondFile, 'json');
 

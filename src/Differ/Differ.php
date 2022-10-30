@@ -72,13 +72,13 @@ function genDiff(string $firstFile, string $secondFile, string $format)
 
     $res = "";
     foreach ($result as $item) {
-        $res .= $item[0] . " " . str_replace('"', "", json_encode([$item[1] => $item[2]]));
+        $res .= "  " . $item[0] . " " . str_replace('"', "", json_encode([$item[1] => $item[2]]));
     }
     $res .= "";
 
-    $res = str_replace("}", "\r\n", $res);
+    $res = str_replace("}", "\n", $res);
     $res = str_replace("{", "", $res);
     $res = str_replace(":", ": ", $res);
 
-    return $res;
+    return "{\n" . $res . "}";
 }
