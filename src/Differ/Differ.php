@@ -2,13 +2,25 @@
 
 namespace Differ\Differ;
 
+use Symfony\Component\Yaml\Yaml;
+
+define("FORMATS", ['json', 'yaml', 'yml']);
+
 function decode($pathToFile)
 {
-    if (is_file($pathToFile)) {
-        return json_decode(file_get_contents($pathToFile), 1);
-    } else {
+    if (!is_file($pathToFile)) {
         return ['Файл не существует'];
     }
+
+    $info = pathinfo($pathToFile);
+
+    switch ($info['extension']) {
+        case 'json':
+            return json_decode(file_get_contents($pathToFile), 1);
+        case 'yaml' || 'yml':
+            return Yaml::parseFile($pathToFile);
+    }
+    return ["Файлы с расширением '{$info['extension']}' не поддерживается"];
 }
 
 function getValue($array = null)
@@ -19,7 +31,7 @@ function getValue($array = null)
     return ' ';
 }
 
-function getArray($array, $operator)
+function getArray($array, $operator): array
 {
     return [$operator, $array[0], $array[1]];
 }
@@ -51,16 +63,8 @@ function getComparison($first = [], $second = []): array
     return $result;
 }
 
-function genDiff(string $firstFile, string $secondFile, string $format)
+function getResultString(array $filesKeys, array $firstFileArr, array $secondFileArr): string
 {
-    $pathToFiles = dirname(__DIR__, 1) . '/files/';
-
-    $firstFileArr = decode($pathToFiles . $firstFile);
-    $secondFileArr = decode($pathToFiles . $secondFile);
-
-    $filesKeys = array_unique(array_merge(array_keys($firstFileArr), array_keys($secondFileArr)));
-    sort($filesKeys);
-
     $result = [];
     foreach ($filesKeys as $value) {
         $first = array_key_exists($value, $firstFileArr) ? [$value, $firstFileArr[$value]] : [];
@@ -81,4 +85,17 @@ function genDiff(string $firstFile, string $secondFile, string $format)
     $res = str_replace(":", ": ", $res);
 
     return "{\n" . $res . "}";
+}
+
+function genDiff(string $firstFile, string $secondFile, string $format = 'json'): string
+{
+    $pathToFiles = dirname(__DIR__, 1) . '/files/';
+
+    $firstFileArr = decode($pathToFiles . $firstFile);
+    $secondFileArr = decode($pathToFiles . $secondFile);
+
+    $filesKeys = array_unique(array_merge(array_keys($firstFileArr), array_keys($secondFileArr)));
+    sort($filesKeys);
+
+    return getResultString($filesKeys, $firstFileArr, $secondFileArr);
 }

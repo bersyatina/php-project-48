@@ -29,5 +29,4 @@ DOCOPT;
     $firstFile = $result['<firstFile>'];
     $secondFile = $result['<secondFile>'];
     $format = $result['--format'];
-
-genDiff($firstFile, $secondFile, $format);
+print_r(genDiff($firstFile, $secondFile, $format));

@@ -2,7 +2,7 @@
 
 namespace Tests\Differ;
 
-use function \Differ\Differ\genDiff as genDiff;
+use function Differ\Differ\genDiff as genDiff;
 use PHPUnit\Framework\TestCase;
 
 class DifferTest extends TestCase
@@ -11,18 +11,20 @@ class DifferTest extends TestCase
     {
         $firstFile = 'file1.json';
         $secondFile = 'file2.json';
-        $result = "{
-  - follow: false
-    host: hexlet.io
-  - proxy: 123.234.53.22
-  - timeout: 50
-  + timeout: 20
-  + verbose: true
-}";
+        $result = file_get_contents(dirname(__DIR__, 1) . '/fixtures/files/result');
 
         $diff = genDiff($firstFile, $secondFile, 'json');
 
         $this->assertEquals($diff, $result);
-//        $this->assertEquals(collect($children), $user->getChildren());
     }
+
+//    public function testGenDiffYamlFiles(): void
+//    {
+//        $result1 = file_get_contents(dirname(__DIR__, 1) . '/fixtures/files/result');
+//        $firstFile = 'file1.yml';
+//        $secondFile = 'file2.yaml';
+//
+//        $diff = genDiff($firstFile, $secondFile, 'yaml');
+//        $this->assertEquals($diff, $result1);
+//    }
 }
