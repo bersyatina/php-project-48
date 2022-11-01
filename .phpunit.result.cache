@@ -1,1 +1,1 @@
-{"version":1,"defects":{"Tests\\Differ\\DifferTest::testGenDiff":3,"Tests\\Differ\\DifferTest::testGenDiffYamlFiles":3},"times":{"Tests\\Differ\\DifferTest::testGenDiff":0.001,"Tests\\Differ\\DifferTest::testGenDiffYamlFiles":0.001}}
+{"version":1,"defects":{"Tests\\Differ\\DifferTest::testGenDiff":3,"Tests\\Differ\\DifferTest::testGenDiffYamlFiles":3},"times":{"Tests\\Differ\\DifferTest::testGenDiff":0.002,"Tests\\Differ\\DifferTest::testGenDiffYamlFiles":0.007}}

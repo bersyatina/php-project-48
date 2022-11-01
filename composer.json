@@ -2,7 +2,8 @@
     "name": "hexlet/code",
     "autoload": {
         "files": [
-            "src/Differ/Differ.php"
+            "src/Differ/Differ.php",
+            "src/Parsers/Parsers.php"
         ]
     },
     "description": "Calculator of differences between files .xml and .json",
