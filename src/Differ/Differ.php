@@ -4,68 +4,57 @@ namespace Differ\Differ;
 
 use function Parsers\Parsers\decode;
 
-function getValue($array = null)
+function getComparison($value, $first = [], $second = []): array
 {
-    if (!empty($array)) {
-        return $array[1];
-    }
-    return ' ';
-}
-
-function getArray($array, $operator): array
-{
-    return [$operator, $array[0], $array[1]];
-}
-
-function getComparison($first = [], $second = []): array
-{
-    $result = [];
-    $arrayValues = [
-        'first' => $first,
-        'second' => $second
-    ];
-    switch ($arrayValues) {
-        case $arrayValues['first'] !== [] && $arrayValues['second'] === []:
-            $result[] = \Differ\Differ\getArray($first, '-');
-            break;
-        case $arrayValues['first'] === [] && $arrayValues['second'] !== []:
-            $result[] = getArray($second, '+');
-            break;
-        case $arrayValues['first'] !== [] && $arrayValues['second'] !== []:
-            if (\Differ\Differ\getValue($arrayValues['first']) === getValue($arrayValues['second'])) {
-                $result[] = getArray($first, ' ');
-                break;
+    if (array_key_exists($value, $first) && array_key_exists($value, $second)) {
+        if (!is_array($first[$value]) || !is_array($second[$value])) {
+            if ($first[$value] === $second[$value]) {
+                return [' ', $value, $first[$value]];
+            } else {
+                return [['-', $value, $first[$value]], ['+', $value, $second[$value]]];
             }
-            $result[] = getArray($first, '-');
-            $result[] = getArray($second, '+');
-            break;
+        }
+        return [' ', $value, $first[$value]];
+    } elseif (array_key_exists($value, $first) && !array_key_exists($value, $second)) {
+        return ['-', $value, $first[$value]];
+    } elseif (!array_key_exists($value, $first) && array_key_exists($value, $second)) {
+        return ['+', $value, $second[$value]];
     }
+    return [];
+}
+
+function suitableValue(mixed $value, mixed $fileArr): bool
+{
+    return (array_key_exists($value[1], $fileArr) && is_array($fileArr[$value[1]]));
+}
+
+function getResultString(array $filesKeys, array $firstFileArr, array $secondFileArr)
+{
+    $result = array_map(function ($value) use ($firstFileArr, $secondFileArr){
+        if (array_key_exists($value, $firstFileArr) && array_key_exists($value, $secondFileArr)){
+            if (is_array($firstFileArr[$value]) && is_array($secondFileArr[$value])) {
+                $arrayKeys = array_unique(array_merge(array_keys($firstFileArr[$value]), array_keys($secondFileArr[$value])));
+                sort($arrayKeys);
+                $item = getComparison($value, $firstFileArr, $secondFileArr);
+                $item[2] = getResultString($arrayKeys, $firstFileArr[$value], $secondFileArr[$value]);
+                return $item;
+            }
+        }
+        return getComparison($value, $firstFileArr, $secondFileArr);
+    }, $filesKeys);
 
     return $result;
-}
-
-function getResultString(array $filesKeys, array $firstFileArr, array $secondFileArr): string
-{
-    $result = [];
-    foreach ($filesKeys as $value) {
-        $first = array_key_exists($value, $firstFileArr) ? [$value, $firstFileArr[$value]] : [];
-        $second = array_key_exists($value, $secondFileArr) ? [$value, $secondFileArr[$value]] : [];
-        $arrayComparison = getComparison($first, $second);
-        $result[] = $arrayComparison;
-    }
-    $result = array_merge(...$result);
-
-    $res = "";
-    foreach ($result as $item) {
-        $res .= "  " . $item[0] . " " . str_replace('"', "", json_encode([$item[1] => $item[2]]));
-    }
-    $res .= "";
-
-    $res = str_replace("}", "\n", $res);
-    $res = str_replace("{", "", $res);
-    $res = str_replace(":", ": ", $res);
-
-    return "{\n" . $res . "}";
+//    $res = "";
+//    foreach ($result as $item) {
+//        $res .= "  " . $item[0] . " " . str_replace('"', "", json_encode([$item[1] => $item[2]]));
+//    }
+//    $res .= "";
+//
+//    $res = str_replace("}", "\n", $res);
+//    $res = str_replace("{", "", $res);
+//    $res = str_replace(":", ": ", $res);
+//
+//    return "{\n" . $res . "}";
 }
 
 function genDiff(string $firstFile, string $secondFile, string $format = 'json'): string
@@ -77,6 +66,6 @@ function genDiff(string $firstFile, string $secondFile, string $format = 'json')
 
     $filesKeys = array_unique(array_merge(array_keys($firstFileArr), array_keys($secondFileArr)));
     sort($filesKeys);
-
+    dd(getResultString($filesKeys, $firstFileArr, $secondFileArr));
     return getResultString($filesKeys, $firstFileArr, $secondFileArr);
 }

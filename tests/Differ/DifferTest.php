@@ -9,13 +9,13 @@ class DifferTest extends TestCase
 {
     public function testGenDiff(): void
     {
-        $result = file_get_contents(dirname(__DIR__, 1) . '/fixtures/files/result');
-        $firstFile = 'file1.json';
-        $secondFile = 'file2.json';
+        $result = file_get_contents(dirname(__DIR__, 1) . '/fixtures/files/result2');
+        $firstFile = 'file3.json';
+        $secondFile = 'file4.json';
 
         $diff = genDiff($firstFile, $secondFile, 'json');
 
-        $this->assertEquals($diff, $result);
+        $this->assertEquals($result, $diff);
     }
 
     public function testGenDiffYamlFiles(): void
