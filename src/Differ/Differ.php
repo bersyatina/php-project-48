@@ -23,27 +23,49 @@ function getComparison($value, $first = [], $second = []): array
     return [];
 }
 
-function suitableValue(mixed $value, mixed $fileArr): bool
+function getResultToString(array $fileArr): string
 {
-    return (array_key_exists($value[1], $fileArr) && is_array($fileArr[$value[1]]));
+    $res = "";
+    foreach ($fileArr as $item) {
+        $res .= "  " . $item[0] . " " . str_replace('"', "", json_encode([$item[1] => $item[2]]));
+    }
+    $res .= "";
+    $res = str_replace("}", "\n", $res);
+    $res = str_replace("{", "", $res);
+    $res = str_replace(":", ": ", $res);
+    return "{\n" . $res . "}";
 }
 
-function getResultString(array $filesKeys, array $firstFileArr, array $secondFileArr)
+function generateKeys(array $firstArr, array $secondArr): array
 {
-    $result = array_map(function ($value) use ($firstFileArr, $secondFileArr){
-        if (array_key_exists($value, $firstFileArr) && array_key_exists($value, $secondFileArr)){
-            if (is_array($firstFileArr[$value]) && is_array($secondFileArr[$value])) {
-                $arrayKeys = array_unique(array_merge(array_keys($firstFileArr[$value]), array_keys($secondFileArr[$value])));
-                sort($arrayKeys);
-                $item = getComparison($value, $firstFileArr, $secondFileArr);
-                $item[2] = getResultString($arrayKeys, $firstFileArr[$value], $secondFileArr[$value]);
-                return $item;
-            }
-        }
-        return getComparison($value, $firstFileArr, $secondFileArr);
-    }, $filesKeys);
-
+    $result = array_unique(array_merge(array_keys($firstArr), array_keys($secondArr)));
+    sort($result);
     return $result;
+}
+
+function getResultToArray(array $filesKeys, array $firstFileArr, array $secondFileArr)
+{
+    $result =array_reduce ($filesKeys, function ($acc, $value) use ($firstFileArr, $secondFileArr) {
+        if (array_key_exists($value, $firstFileArr) && array_key_exists($value, $secondFileArr)) {
+            if (is_array($firstFileArr[$value]) && is_array($secondFileArr[$value])) {
+                $arrayKeys = generateKeys($firstFileArr[$value], $secondFileArr[$value]);
+
+                $acc[$value] = getComparison($value, $firstFileArr, $secondFileArr);
+                $acc[$value][2] = getResultToArray($arrayKeys, $firstFileArr[$value], $secondFileArr[$value]);
+                return $acc
+;            }
+        }
+        $res1 = getComparison($value, $firstFileArr, $secondFileArr);
+
+        if (count($res1) === 2) {
+            $acc[] = $res1[0];
+            $acc[] = $res1[1];
+        } else {
+            $acc[] = $res1;
+        }
+        return $acc;
+    }, []);
+    return array_values($result);
 //    $res = "";
 //    foreach ($result as $item) {
 //        $res .= "  " . $item[0] . " " . str_replace('"', "", json_encode([$item[1] => $item[2]]));
@@ -57,15 +79,16 @@ function getResultString(array $filesKeys, array $firstFileArr, array $secondFil
 //    return "{\n" . $res . "}";
 }
 
-function genDiff(string $firstFile, string $secondFile, string $format = 'json'): string
+
+function genDiff(string $firstFile, string $secondFile, string $format = 'json')
 {
     $pathToFiles = dirname(__DIR__, 1) . '/files/';
 
     $firstFileArr = decode($pathToFiles . $firstFile);
     $secondFileArr = decode($pathToFiles . $secondFile);
+    $filesKeys = generateKeys($firstFileArr, $secondFileArr);
 
-    $filesKeys = array_unique(array_merge(array_keys($firstFileArr), array_keys($secondFileArr)));
-    sort($filesKeys);
-    dd(getResultString($filesKeys, $firstFileArr, $secondFileArr));
-    return getResultString($filesKeys, $firstFileArr, $secondFileArr);
+    $arrResult = getResultToArray($filesKeys, $firstFileArr, $secondFileArr);
+
+    return getResultToString($arrResult);
 }
