@@ -4,37 +4,48 @@ namespace Differ\Differ;
 
 use function Parsers\Parsers\decode;
 
+define("TARGET", 'target');
+
 function getComparison($value, $first = [], $second = []): array
 {
     if (array_key_exists($value, $first) && array_key_exists($value, $second)) {
         if (!is_array($first[$value]) || !is_array($second[$value])) {
             if ($first[$value] === $second[$value]) {
-                return [' ', $value, $first[$value]];
+                return [TARGET, ' ', $value, $first[$value]];
             } else {
-                return [['-', $value, $first[$value]], ['+', $value, $second[$value]]];
+                return [[TARGET, '-', $value, $first[$value]], [TARGET, '+', $value, $second[$value]]];
             }
         }
-        return [' ', $value, $first[$value]];
+        return [TARGET, ' ', $value, $first[$value]];
     } elseif (array_key_exists($value, $first) && !array_key_exists($value, $second)) {
-        return ['-', $value, $first[$value]];
+        return [TARGET, '-', $value, $first[$value]];
     } elseif (!array_key_exists($value, $first) && array_key_exists($value, $second)) {
-        return ['+', $value, $second[$value]];
+        return [TARGET, '+', $value, $second[$value]];
     }
     return [];
 }
 
 function getResultToString(array $fileArr): string
 {
-    $res = "";
-    foreach ($fileArr as $item) {
-        $res .= "  " . $item[0] . " " . str_replace('"', "", json_encode([$item[1] => $item[2]]));
+    $res = '';
+    foreach ($fileArr as $target) {
+        if (is_array($target)){
+            if (in_array(TARGET, $target)) {
+                dump("Вывод", $target[2], $target[3]);
+                array_shift($target);
+                return getResultToString($target);
+            } else {
+                return getResultToString($target);
+            }
+        }
+//        array_shift($target);
+//        dump("ПОСЛЕ", $target);
+        $res .= json_encode($target);
     }
-    $res .= "";
-    $res = str_replace("}", "\n", $res);
-    $res = str_replace("{", "", $res);
-    $res = str_replace(":", ": ", $res);
-    return "{\n" . $res . "}";
+
+    return $res;
 }
+
 
 function generateKeys(array $firstArr, array $secondArr): array
 {
@@ -51,9 +62,9 @@ function getResultToArray(array $filesKeys, array $firstFileArr, array $secondFi
                 $arrayKeys = generateKeys($firstFileArr[$value], $secondFileArr[$value]);
 
                 $acc[$value] = getComparison($value, $firstFileArr, $secondFileArr);
-                $acc[$value][2] = getResultToArray($arrayKeys, $firstFileArr[$value], $secondFileArr[$value]);
+                $acc[$value][3] = getResultToArray($arrayKeys, $firstFileArr[$value], $secondFileArr[$value]);
                 return $acc
-;            }
+                    ;            }
         }
         $res1 = getComparison($value, $firstFileArr, $secondFileArr);
 
