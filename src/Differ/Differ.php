@@ -60,25 +60,27 @@ function getDataStatus (array $data): bool
 function getResultToString(array $array, $depth = 1): string
 {
     $result = array_map(function ($item) use (&$result, $depth, $array){
-        $currentIndent = str_repeat('  ', $depth);
-        $bracketIndent = str_repeat('  ', $depth - 1);
-
+        $currentIndent = str_repeat('    ', $depth);
+        $beforeIdent = str_repeat('  ', $depth);
+        $ident = $depth > 1 ? $currentIndent : $beforeIdent;
         if (is_array($item)) {
             if (!getDataStatus($item)){
-                return array_search($item, $array). ": " . getResultToString($item, $depth + 1);
+//                dump($item);
+                return $ident . array_search($item, $array). ": " . getResultToString($item, $depth + 1);
             } else {
                 if (is_array($item['value'])) {
-                    return "{$currentIndent}{$item['operator']} {$item['key']}: " . getResultToString($item['value'], $depth + 1);
+                    return "{$ident}{$item['operator']} {$item['key']}: " . getResultToString($item['value'], $depth + 1);
                 } else {
-                    return "{$currentIndent}{$item['operator']} {$item['key']}: " . $item['value'];
+                    return "{$ident}{$item['operator']} {$item['key']}: " . $item['value'];
                 }
             }
         }
 //        dump(array_search($item, $array));
-        return array_search($item, $array). ": " . $item;
+        return $ident . array_search($item, $array). ": " . $item;
     }, $array);
-
-    return implode("\n", $result);
+    $currentIndent = str_repeat('    ', $depth);
+    dump($depth, $array);
+    return "{\n" . implode("\n", $result) . "\n{$currentIndent}}";
 }
 
 
