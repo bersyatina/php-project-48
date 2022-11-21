@@ -52,22 +52,33 @@ function getComparison($value, $first = [], $second = []): array
     return [];
 }
 
-function getResultToString(array $fileArr): string
+function getDataStatus (array $data): bool
 {
-    $res = '';
-    foreach ($fileArr as $target) {
-        if (is_array($target)) {
-            if (in_array(TARGET, $target)) {
-                array_shift($target);
-                return getResultToString($target);
+    return (array_key_exists('operator', $data) && array_key_exists('key', $data) && array_key_exists('value', $data));
+}
+
+function getResultToString(array $array, $depth = 1): string
+{
+    $result = array_map(function ($item) use (&$result, $depth, $array){
+        $currentIndent = str_repeat('  ', $depth);
+        $bracketIndent = str_repeat('  ', $depth - 1);
+
+        if (is_array($item)) {
+            if (!getDataStatus($item)){
+                return array_search($item, $array). ": " . getResultToString($item, $depth + 1);
             } else {
-                return getResultToString($target);
+                if (is_array($item['value'])) {
+                    return "{$currentIndent}{$item['operator']} {$item['key']}: " . getResultToString($item['value'], $depth + 1);
+                } else {
+                    return "{$currentIndent}{$item['operator']} {$item['key']}: " . $item['value'];
+                }
             }
         }
-        $res .= json_encode($target);
-    }
+//        dump(array_search($item, $array));
+        return array_search($item, $array). ": " . $item;
+    }, $array);
 
-    return $res;
+    return implode("\n", $result);
 }
 
 
@@ -112,7 +123,7 @@ function genDiff(string $firstFile, string $secondFile, string $format = 'json')
     $secondFileArr = decode($pathToFiles . $secondFile);
     $filesKeys = generateKeys($firstFileArr, $secondFileArr);
 
-    $arrResult = dd(getResultToArray($filesKeys, $firstFileArr, $secondFileArr));
+    $arrResult = getResultToArray($filesKeys, $firstFileArr, $secondFileArr);
 
     return getResultToString($arrResult);
 }
