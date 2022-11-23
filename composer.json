@@ -3,7 +3,8 @@
     "autoload": {
         "files": [
             "src/Differ/Differ.php",
-            "src/Parsers/Parsers.php"
+            "src/Parsers/Parsers.php",
+            "src/Formatters/Stylish.php"
         ]
     },
     "description": "Calculator of differences between files .xml and .json",
