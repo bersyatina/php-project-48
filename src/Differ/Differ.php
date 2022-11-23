@@ -4,8 +4,6 @@ namespace Differ\Differ;
 
 use function Parsers\Parsers\decode;
 
-define("TARGET", 'target');
-
 function getComparison($value, $first = [], $second = []): array
 {
     if (array_key_exists($value, $first) && array_key_exists($value, $second)) {
@@ -52,34 +50,37 @@ function getComparison($value, $first = [], $second = []): array
     return [];
 }
 
-function getDataStatus (array $data): bool
+function getDataStatus(array $data): bool
 {
     return (array_key_exists('operator', $data) && array_key_exists('key', $data) && array_key_exists('value', $data));
 }
 
+function toString($value): string
+{
+    return trim(var_export($value, true), "'") === "NULL" ? "null" : trim(var_export($value, true), "'");
+}
+
 function getResultToString(array $array, $depth = 1): string
 {
-    $result = array_map(function ($item) use (&$result, $depth, $array){
-        $currentIndent = str_repeat('    ', $depth);
-        $beforeIdent = str_repeat('  ', $depth);
-        $ident = $depth > 1 ? $currentIndent : $beforeIdent;
+    $result = array_map(function ($item) use (&$result, $depth, $array) {
+        $currentIndent = str_repeat('  ', $depth);
+        $longIdent = str_repeat('  ', $depth + 1);
         if (is_array($item)) {
-            if (!getDataStatus($item)){
-//                dump($item);
-                return $ident . array_search($item, $array). ": " . getResultToString($item, $depth + 1);
+            if (!getDataStatus($item)) {
+                return $longIdent . array_search($item, $array) . ": " . getResultToString($item, $depth + 2);
             } else {
+                $line = "{$currentIndent}{$item['operator']} {$item['key']}: ";
                 if (is_array($item['value'])) {
-                    return "{$ident}{$item['operator']} {$item['key']}: " . getResultToString($item['value'], $depth + 1);
+                    return $line . getResultToString($item['value'], $depth + 2);
                 } else {
-                    return "{$ident}{$item['operator']} {$item['key']}: " . $item['value'];
+                    return $line . toString($item['value']);
                 }
             }
         }
-//        dump(array_search($item, $array));
-        return $ident . array_search($item, $array). ": " . $item;
+        $currentIndent = str_repeat('  ', $depth + 1);
+        return $currentIndent . array_search($item, $array) . ": " . toString($item);
     }, $array);
-    $currentIndent = str_repeat('    ', $depth);
-    dump($depth, $array);
+    $currentIndent = str_repeat('  ', $depth - 1);
     return "{\n" . implode("\n", $result) . "\n{$currentIndent}}";
 }
 
@@ -117,7 +118,7 @@ function getResultToArray(array $filesKeys, array $firstFileArr, array $secondFi
 }
 
 
-function genDiff(string $firstFile, string $secondFile, string $format = 'json')
+function genDiff(string $firstFile, string $secondFile, string $format = 'json'): string
 {
     $pathToFiles = dirname(__DIR__, 1) . '/files/';
 
