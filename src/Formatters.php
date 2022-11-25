@@ -16,4 +16,3 @@ function format($arrResult, $format): string
             return 'Неизвестный формат: ' . $format;
     }
 }
-

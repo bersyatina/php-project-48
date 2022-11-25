@@ -7,18 +7,13 @@ use function Parsers\Parsers\toString;
 
 function getPrimitiveData(mixed $data): mixed
 {
-    if (is_bool($data) || $data === null) {
-        return toString($data);
-    } else {
-        return "'" . toString($data). "'";
-    }
+    return (is_bool($data) || $data === null) ? toString($data) : "'" . toString($data) . "'";
 }
 
 function getPlainData(array $array, string $path = ''): string
 {
     $result = array_reduce($array, function ($acc, $item) use (&$result, $array, $path) {
-        $res = "";
-        if (getDataStatus($item)){
+        if (getDataStatus($item)) {
             $res = ltrim("{$path}.{$item['key']}", ".");
             $res = "'{$res}'";
             $filter = array_filter($array, fn($value) => $item['key'] === $value['key']);
