@@ -5,38 +5,57 @@ namespace Formatters\Plain;
 use function Parsers\Parsers\getDataStatus;
 use function Parsers\Parsers\toString;
 
-function getResultToPlain(array $array, string $path = ''): string
+function getPrimitiveData(mixed $data): mixed
 {
-//    dump($path, $array);
-    $result = array_map(function ($item) use (&$result, $array, $path) {
-        $path = ltrim($path, ".");
+    if (is_bool($data) || $data === null) {
+        return toString($data);
+    } else {
+        return "'" . toString($data). "'";
+    }
+}
+
+function getPlainData(array $array, string $path = ''): string
+{
+    $result = array_reduce($array, function ($acc, $item) use (&$result, $array, $path) {
+        $res = "";
         if (getDataStatus($item)){
-            $res = "'{$path}.{$item['key']}' ";
+            $res = ltrim("{$path}.{$item['key']}", ".");
+            $res = "'{$res}'";
             $filter = array_filter($array, fn($value) => $item['key'] === $value['key']);
             if ($item['operator'] === "+") {
                 if (count($filter) !== 2) {
-                    $res .= "was added with value: ";
+                    if (is_array($item['value'])) {
+                        $acc[] = "{$res} was added with value: [complex value]";
+                    } else {
+                        $acc[] = "{$res} was added with value: " . getPrimitiveData($item['value']);
+                    }
                 } else {
-                    $res .= "was updated. From ";
+                    $acc[array_key_last($acc)] .= getPrimitiveData($item['value']);
+                    $acc[] = "";
                 }
-                if (is_array($item['value'])) {
-                    $res .= "[complex value]";
-                } else {
-                    $res .= toString($item['value']);
-                }
-
             } elseif ($item['operator'] === "-") {
-                $res .= "was removed";
+                if (count($filter) !== 2) {
+                    $acc[] = "{$res} was removed";
+                } else {
+                    if (is_array($item['value'])) {
+                        $acc[] = "{$res} was updated. From [complex value] to ";
+                    } else {
+                        $acc[] = "{$res} was updated. From " . getPrimitiveData($item['value']) . " to ";
+                    }
+                }
             } elseif ($item['operator'] === " ") {
                 if (is_array($item['value'])) {
-//                    dump($item['key']);
-
-                    $res = getResultToPlain($item['value'], $path . "." . $item['key']);
+                    $acc[] = getPlainData($item['value'], ltrim($path, ".") . "." . $item['key']);
                 }
             }
-            return $res;
         }
-    }, $array);
+        return $acc;
+    }, []);
 
-    return implode("\n", $result);
+    return implode("\nProperty ", array_diff($result, array('')));
+}
+
+function getResultToPlain(array $array): string
+{
+    return "Property " . getPlainData($array);
 }

@@ -25,9 +25,8 @@ class DifferTest extends TestCase
         $diff2 = genDiff($treeFile, $fourFile, 'stylish');
         $this->assertEquals($result2, $diff2);
 
-        $diff3 = genDiff($firstFile, $secondFile, 'plain');
+        $diff3 = genDiff($treeFile, $fourFile, 'plain');
         $this->assertEquals($result3, $diff3);
-
     }
 
     public function testGenDiffYamlFiles(): void
