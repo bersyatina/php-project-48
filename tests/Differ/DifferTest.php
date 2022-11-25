@@ -11,6 +11,7 @@ class DifferTest extends TestCase
     {
         $result1 = file_get_contents(dirname(__DIR__, 1) . '/fixtures/files/result');
         $result2 = file_get_contents(dirname(__DIR__, 1) . '/fixtures/files/result2');
+        $result3 = file_get_contents(dirname(__DIR__, 1) . '/fixtures/files/result3');
 
         $firstFile = 'file1.json';
         $secondFile = 'file2.json';
@@ -23,12 +24,17 @@ class DifferTest extends TestCase
 
         $diff2 = genDiff($treeFile, $fourFile, 'stylish');
         $this->assertEquals($result2, $diff2);
+
+        $diff3 = genDiff($firstFile, $secondFile, 'plain');
+        $this->assertEquals($result3, $diff3);
+
     }
 
     public function testGenDiffYamlFiles(): void
     {
         $result1 = file_get_contents(dirname(__DIR__, 1) . '/fixtures/files/result');
         $result2 = file_get_contents(dirname(__DIR__, 1) . '/fixtures/files/result2');
+        $result3 = file_get_contents(dirname(__DIR__, 1) . '/fixtures/files/result3');
 
         $firstFile = 'file1.yml';
         $secondFile = 'file2.yaml';
@@ -41,5 +47,8 @@ class DifferTest extends TestCase
 
         $diff2 = genDiff($treeFile, $fourFile, 'stylish');
         $this->assertEquals($diff2, $result2);
+
+        $diff3 = genDiff($treeFile, $fourFile, 'plain');
+        $this->assertEquals($diff3, $result3);
     }
 }

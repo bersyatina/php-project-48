@@ -4,7 +4,9 @@
         "files": [
             "src/Differ/Differ.php",
             "src/Parsers/Parsers.php",
-            "src/Formatters/Stylish.php"
+            "src/Formatters/Stylish.php",
+            "src/Formatters/Plain.php",
+            "src/Formatters.php"
         ]
     },
     "description": "Calculator of differences between files .xml and .json",

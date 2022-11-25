@@ -3,9 +3,9 @@
 namespace Differ\Differ;
 
 use function Parsers\Parsers\decode;
-use function Formatters\stylish\generateKeys;
-use function Formatters\stylish\getResultToArray;
-use function Formatters\stylish\getResultToString;
+use function Parsers\Parsers\generateKeys;
+use function Parsers\Parsers\getResultToArray;
+use function Formatters\format;
 
 function genDiff(string $firstFile, string $secondFile, string $format = 'stylish'): string
 {
@@ -19,14 +19,4 @@ function genDiff(string $firstFile, string $secondFile, string $format = 'stylis
     $arrResult = getResultToArray($filesKeys, $firstFileArr, $secondFileArr);
 
     return format($arrResult, $format);
-}
-
-function format($arrResult, $format): string
-{
-    switch ($format) {
-        case "stylish":
-            return getResultToString($arrResult);
-        default:
-            return 'Неизвестный формат: ' . $format;
-    }
 }
