@@ -5,43 +5,41 @@ namespace Formatters\Plain;
 use function Parsers\Parsers\getDataStatus;
 use function Parsers\Parsers\toString;
 
-function getPrimitiveData(mixed $data): mixed
+function getPrimitiveData(mixed $data): string
 {
     return (is_bool($data) || $data === null) ? toString($data) : "'" . toString($data) . "'";
 }
 
 function getPlainData(array $array, string $path = ''): string
 {
-    $result = array_reduce($array, function ($acc, $item) use (&$result, $array, $path) {
+    $result = array_reduce($array, function ($acc, $item) use ($array, $path) {
         if (getDataStatus($item)) {
-            $res = ltrim("{$path}.{$item['key']}", ".");
-            $res = "'{$res}'";
+            $res = "'" . ltrim("{$path}.{$item['key']}", ".") . "'";
             $filter = array_filter($array, fn($value) => $item['key'] === $value['key']);
-            if ($item['operator'] === "+") {
-                if (count($filter) !== 2) {
-                    if (is_array($item['value'])) {
-                        $acc[] = "{$res} was added with value: [complex value]";
+            switch ($item['operator']) {
+                case "+":
+                    if (count($filter) !== 2) {
+                        $acc[] = is_array($item['value'])
+                            ? "{$res} was added with value: [complex value]"
+                            : "{$res} was added with value: " . getPrimitiveData($item['value']);
                     } else {
-                        $acc[] = "{$res} was added with value: " . getPrimitiveData($item['value']);
+                        $acc[array_key_last($acc)] .= getPrimitiveData($item['value']);
+                        $acc[] = "";
                     }
-                } else {
-                    $acc[array_key_last($acc)] .= getPrimitiveData($item['value']);
-                    $acc[] = "";
-                }
-            } elseif ($item['operator'] === "-") {
-                if (count($filter) !== 2) {
-                    $acc[] = "{$res} was removed";
-                } else {
-                    if (is_array($item['value'])) {
-                        $acc[] = "{$res} was updated. From [complex value] to ";
+                    break;
+                case "-":
+                    if (count($filter) !== 2) {
+                        $acc[] = "{$res} was removed";
                     } else {
-                        $acc[] = "{$res} was updated. From " . getPrimitiveData($item['value']) . " to ";
+                        $acc[] = is_array($item['value'])
+                            ? "{$res} was updated. From [complex value] to "
+                            : "{$res} was updated. From " . getPrimitiveData($item['value']) . " to ";
                     }
-                }
-            } elseif ($item['operator'] === " ") {
-                if (is_array($item['value'])) {
-                    $acc[] = getPlainData($item['value'], ltrim($path, ".") . "." . $item['key']);
-                }
+                    break;
+                case " ":
+                    if (is_array($item['value'])) {
+                        $acc[] = getPlainData($item['value'], ltrim($path, ".") . "." . $item['key']);
+                    }
             }
         }
         return $acc;

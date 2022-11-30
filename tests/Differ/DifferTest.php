@@ -7,47 +7,48 @@ use PHPUnit\Framework\TestCase;
 
 class DifferTest extends TestCase
 {
-    public function testGenDiffJsonFiles(): void
+
+    public function testGenDiffFiles(): void
     {
         $result1 = file_get_contents(dirname(__DIR__, 1) . '/fixtures/files/result');
         $result2 = file_get_contents(dirname(__DIR__, 1) . '/fixtures/files/result2');
         $result3 = file_get_contents(dirname(__DIR__, 1) . '/fixtures/files/result3');
+        $result4 = file_get_contents(dirname(__DIR__, 1) . '/fixtures/files/result4.json');
 
-        $firstFile = 'file1.json';
-        $secondFile = 'file2.json';
+        $firstFileJson = 'file1.json';
+        $twoFileJson = 'file2.json';
 
-        $treeFile = 'file3.json';
-        $fourFile = 'file4.json';
+        $treeFileJson = 'file3.json';
+        $fourFileJson = 'file4.json';
 
-        $diff1 = genDiff($firstFile, $secondFile, 'stylish');
+        $firstFileYml = 'file1.yml';
+        $twoFileYml = 'file2.yaml';
+
+        $treeFileYml = 'file3.yml';
+        $fourFileYml = 'file4.yaml';
+
+        $diff1 = genDiff($firstFileJson, $twoFileJson, 'stylish');
         $this->assertEquals($result1, $diff1);
 
-        $diff2 = genDiff($treeFile, $fourFile, 'stylish');
-        $this->assertEquals($result2, $diff2);
+        $diff2 = genDiff($firstFileYml, $twoFileYml, 'stylish');
+        $this->assertEquals($result1, $diff2);
 
-        $diff3 = genDiff($treeFile, $fourFile, 'plain');
-        $this->assertEquals($result3, $diff3);
-    }
+        $diff3 = genDiff($treeFileJson, $fourFileJson, 'stylish');
+        $this->assertEquals($result2, $diff3);
 
-    public function testGenDiffYamlFiles(): void
-    {
-        $result1 = file_get_contents(dirname(__DIR__, 1) . '/fixtures/files/result');
-        $result2 = file_get_contents(dirname(__DIR__, 1) . '/fixtures/files/result2');
-        $result3 = file_get_contents(dirname(__DIR__, 1) . '/fixtures/files/result3');
+        $diff4 = genDiff($treeFileYml, $fourFileYml, 'stylish');
+        $this->assertEquals($result2, $diff4);
 
-        $firstFile = 'file1.yml';
-        $secondFile = 'file2.yaml';
+        $diff5 = genDiff($treeFileJson, $fourFileJson, 'plain');
+        $this->assertEquals($result3, $diff5);
 
-        $treeFile = 'file3.yml';
-        $fourFile = 'file4.yaml';
+        $diff6 = genDiff($treeFileYml, $fourFileYml, 'plain');
+        $this->assertEquals($result3, $diff6);
 
-        $diff1 = genDiff($firstFile, $secondFile, 'stylish');
-        $this->assertEquals($diff1, $result1);
+        $diff7 = genDiff($treeFileJson, $fourFileJson, 'json');
+        $this->assertEquals($result4, $diff7);
 
-        $diff2 = genDiff($treeFile, $fourFile, 'stylish');
-        $this->assertEquals($diff2, $result2);
-
-        $diff3 = genDiff($treeFile, $fourFile, 'plain');
-        $this->assertEquals($diff3, $result3);
+        $diff8 = genDiff($treeFileYml, $fourFileYml, 'json');
+        $this->assertEquals($result4, $diff8);
     }
 }

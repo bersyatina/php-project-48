@@ -4,6 +4,7 @@ namespace Formatters;
 
 use function Formatters\Stylish\getResultToStylish;
 use function Formatters\Plain\getResultToPlain;
+use function Formatters\Json\getResultToJson;
 
 function format($arrResult, $format): string
 {
@@ -12,7 +13,9 @@ function format($arrResult, $format): string
             return getResultToStylish($arrResult);
         case "plain":
             return getResultToPlain($arrResult);
+        case "json":
+            return getResultToJson($arrResult);
         default:
-            return 'Неизвестный формат: ' . $format;
+            return 'The format is not defined: ' . $format;
     }
 }

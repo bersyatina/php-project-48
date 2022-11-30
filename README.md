@@ -13,5 +13,8 @@ Comparison of flat files:
 Comparing files with a tree structure:
 <a href="https://asciinema.org/a/CDzRiflhX1Ny1hX0i9IJxOato" target="_blank"><img src="https://asciinema.org/a/CDzRiflhX1Ny1hX0i9IJxOato.svg" /></a>
 <br>
-File comparison and output of the result in "Plain" format:
+Files comparison and output of the result in "Plain" format:
 <a href="https://asciinema.org/a/2vmdryGuF1VcFOYlr9KpY7yJJ" target="_blank"><img src="https://asciinema.org/a/2vmdryGuF1VcFOYlr9KpY7yJJ.svg" /></a>
+<br>
+Files comparison and output of the result in "Json" format:
+<a href="https://asciinema.org/a/p3kKJuNiTTPlhJUEqbskqIcko" target="_blank"><img src="https://asciinema.org/a/p3kKJuNiTTPlhJUEqbskqIcko.svg" /></a>
