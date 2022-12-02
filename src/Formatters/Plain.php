@@ -7,7 +7,7 @@ use function Parsers\Parsers\toString;
 
 function getPrimitiveData(mixed $data): string
 {
-    return (is_bool($data) || $data === null) ? toString($data) : "'" . toString($data) . "'";
+    return (is_bool($data) || $data === null || is_numeric($data)) ? toString($data) : "'" . toString($data) . "'";
 }
 
 function getPlainData(array $array, string $path = ''): string
@@ -23,7 +23,10 @@ function getPlainData(array $array, string $path = ''): string
                             ? "{$res} was added with value: [complex value]"
                             : "{$res} was added with value: " . getPrimitiveData($item['value']);
                     } else {
-                        $acc[array_key_last($acc)] .= getPrimitiveData($item['value']);
+                        $previousValue = is_array($item['value'])
+                            ? "[complex value]"
+                            : getPrimitiveData($item['value']);
+                        $acc[array_key_last($acc)] .= $previousValue;
                         $acc[] = "";
                     }
                     break;
