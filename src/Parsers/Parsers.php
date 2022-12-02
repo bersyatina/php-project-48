@@ -4,24 +4,25 @@ namespace Parsers\Parsers;
 
 use Symfony\Component\Yaml\Yaml;
 
-function decode($pathToFile)
+function decode(string $pathToFile): array
 {
     if (!is_file($pathToFile)) {
-        return ['Файл не существует'];
+        return ['File not found!'];
     }
 
-    $info = pathinfo($pathToFile);
+    $pathInfo = pathinfo($pathToFile);
+    $extension = array_key_exists('extension', $pathInfo) ? '.' . $pathInfo['extension'] : '';
 
-    switch ($info['extension']) {
-        case 'json':
-            return json_decode(file_get_contents($pathToFile), true);
-        case 'yaml' || 'yml':
+    switch ($extension) {
+        case $extension === 'json':
+            return json_decode((string) file_get_contents($pathToFile), true);
+        case $extension === 'yaml' || 'yml':
             return Yaml::parseFile($pathToFile);
     }
-    return ["Файлы с расширением '{$info['extension']}' не поддерживается"];
+    return ["Files with the extension '{$extension}' are not supported"];
 }
 
-function getComparison($value, $first = [], $second = []): array
+function getComparison(string $value, array $first = [], array $second = []): array
 {
     if (array_key_exists($value, $first) && array_key_exists($value, $second)) {
         if (!is_array($first[$value]) || !is_array($second[$value])) {
@@ -72,16 +73,21 @@ function getDataStatus(array $data): bool
     return (array_key_exists('operator', $data) && array_key_exists('key', $data) && array_key_exists('value', $data));
 }
 
-function toString($value): string
+function toString(mixed $value): string
 {
     return trim(var_export($value, true), "'") === "NULL" ? "null" : trim(var_export($value, true), "'");
+}
+
+function array_sort(array $array): array
+{
+    usort($array, fn($a, $b) => $a <=> $b);
+    return $array;
 }
 
 function generateKeys(array $firstArr, array $secondArr): array
 {
     $result = array_unique(array_merge(array_keys($firstArr), array_keys($secondArr)));
-    sort($result);
-    return $result;
+    return array_sort($result);
 }
 
 function getResultToArray(array $filesKeys, array $firstFileArr, array $secondFileArr): array

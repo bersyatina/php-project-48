@@ -12,41 +12,39 @@ function getPrimitiveData(mixed $data): string
 
 function getPlainData(array $array, string $path = ''): string
 {
-    $result = array_reduce($array, function ($acc, $item) use ($array, $path) {
+    $result = array_map(function ($item) use ($array, $path) {
         if (getDataStatus($item)) {
             $res = "'" . ltrim("{$path}.{$item['key']}", ".") . "'";
             $filter = array_filter($array, fn($value) => $item['key'] === $value['key']);
             switch ($item['operator']) {
                 case "+":
                     if (count($filter) !== 2) {
-                        $acc[] = is_array($item['value'])
+                        return is_array($item['value'])
                             ? "{$res} was added with value: [complex value]"
                             : "{$res} was added with value: " . getPrimitiveData($item['value']);
                     } else {
-                        $previousValue = is_array($item['value'])
-                            ? "[complex value]"
-                            : getPrimitiveData($item['value']);
-                        $acc[array_key_last($acc)] .= $previousValue;
-                        $acc[] = "";
+                        return '';
                     }
-                    break;
                 case "-":
                     if (count($filter) !== 2) {
-                        $acc[] = "{$res} was removed";
+                        return "{$res} was removed";
                     } else {
-                        $acc[] = is_array($item['value'])
-                            ? "{$res} was updated. From [complex value] to "
-                            : "{$res} was updated. From " . getPrimitiveData($item['value']) . " to ";
+                        $nextItem = $array[array_search($item, $array, false) + 1];
+                        $nextValue = is_array($nextItem['value'])
+                            ? "[complex value]"
+                            : getPrimitiveData($nextItem['value']);
+                        return is_array($item['value'])
+                            ? "{$res} was updated. From [complex value] to {$nextValue}"
+                            : "{$res} was updated. From " . getPrimitiveData($item['value']) . " to {$nextValue}";
                     }
-                    break;
                 case " ":
                     if (is_array($item['value'])) {
-                        $acc[] = getPlainData($item['value'], ltrim($path, ".") . "." . $item['key']);
+                        return getPlainData($item['value'], ltrim($path, ".") . "." . $item['key']);
                     }
             }
         }
-        return $acc;
-    }, []);
+        return '';
+    }, $array);
 
     return implode("\nProperty ", array_diff($result, array('')));
 }

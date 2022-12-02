@@ -9,7 +9,7 @@ function getJsonData(array $array, string $path = ''): string
 {
     $result = array_map(function ($item) use ($array, $path) {
         if (getDataStatus($item)) {
-            $path = ltrim($path . '.' . $item['key'], '.');
+            $newPath = ltrim($path . '.' . $item['key'], '.');
             $filter = array_filter($array, fn($value) => $item['key'] === $value['key']);
             switch ($item['operator']) {
                 case '+':
@@ -23,12 +23,12 @@ function getJsonData(array $array, string $path = ''): string
                 case ' ':
                     $operation = "no changed";
                     $value = is_array($item['value'])
-                        ? json_decode(getJsonData($item['value'], $path), true)
+                        ? json_decode(getJsonData($item['value'], $newPath), true)
                         : toString($item['value']);
             }
 
             return [
-                'path' => $path,
+                'path' => $newPath,
                 'operation' => $operation ?? '',
                 'value' => $value ?? '',
             ];

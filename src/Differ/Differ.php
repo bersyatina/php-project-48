@@ -9,8 +9,10 @@ use function Formatters\format;
 
 function genDiff(string $firstFile, string $secondFile, string $format = 'stylish'): string
 {
-    $firstFileArr = decode($firstFile);
-    $secondFileArr = decode($secondFile);
+    $pathToFiles = dirname(__DIR__, 1) . '/files/';
+
+    $firstFileArr = decode($pathToFiles . $firstFile);
+    $secondFileArr = decode($pathToFiles . $secondFile);
 
     $filesKeys = generateKeys($firstFileArr, $secondFileArr);
 
