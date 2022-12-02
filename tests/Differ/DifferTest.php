@@ -2,7 +2,7 @@
 
 namespace Tests\Differ;
 
-use \PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\TestCase;
 
 use function Differ\Differ\genDiff as genDiff;
 
@@ -49,7 +49,6 @@ class DifferTest extends TestCase
         $this->assertEquals($result4, $diff7);
 
         $diff8 = genDiff($treeFileYml, $fourFileYml, 'json');
-        
         $this->assertEquals($result4, $diff8);
     }
 }
