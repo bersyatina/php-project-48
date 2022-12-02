@@ -19,7 +19,6 @@ class DifferTest extends TestCase
         $twoFileJson = 'file2.json';
 
         $treeFileJson = 'file3.json';
-        
         $fourFileJson = 'file4.json';
 
         $firstFileYml = 'file1.yml';
@@ -50,6 +49,7 @@ class DifferTest extends TestCase
         $this->assertEquals($result4, $diff7);
 
         $diff8 = genDiff($treeFileYml, $fourFileYml, 'json');
+        
         $this->assertEquals($result4, $diff8);
     }
 }
