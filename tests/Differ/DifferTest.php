@@ -2,12 +2,12 @@
 
 namespace Tests\Differ;
 
+use \PHPUnit\Framework\TestCase;
+
 use function Differ\Differ\genDiff as genDiff;
-use PHPUnit\Framework\TestCase;
 
 class DifferTest extends TestCase
 {
-
     public function testGenDiffFiles(): void
     {
         $result1 = file_get_contents(dirname(__DIR__, 1) . '/fixtures/files/result');
