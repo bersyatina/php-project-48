@@ -19,6 +19,7 @@ class DifferTest extends TestCase
         $twoFileJson = 'file2.json';
 
         $treeFileJson = 'file3.json';
+        
         $fourFileJson = 'file4.json';
 
         $firstFileYml = 'file1.yml';
