@@ -10,13 +10,20 @@ function decode(string $pathToFile): array
         return ['File not found!'];
     }
 
+    $validExtensions = [
+        'json',
+        'yaml',
+        'yml'
+    ];
+
     $pathInfo = pathinfo($pathToFile);
-    $extension = array_key_exists('extension', $pathInfo) ? '.' . $pathInfo['extension'] : '';
+    $extension = array_key_exists('extension', $pathInfo) ? $pathInfo['extension'] : '';
 
     switch ($extension) {
         case 'json':
             return json_decode((string) file_get_contents($pathToFile), true);
-        case 'yaml' || 'yml':
+        case 'yaml':
+        case 'yml':
             return Yaml::parseFile($pathToFile);
     }
     return ["Files with the extension '{$extension}' are not supported"];
@@ -83,7 +90,7 @@ function arraySort(array $array, array $resultArray = []): array
     if (count($array) > 0) {
         $minValue = min($array);
         $newArray = $array;
-        unset($newArray[array_search($minValue, $newArray)]);
+        unset($newArray[array_search($minValue, $newArray, true)]);
         $newResultArray = $resultArray;
         $newResultArray[] = $minValue;
         return arraySort($newArray, $newResultArray);
