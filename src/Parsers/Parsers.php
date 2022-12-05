@@ -110,7 +110,6 @@ function getReplacedArray(array $array)
         } else {
             $newArray[] = $item;
         }
-
     });
     return $newArray;
 }
