@@ -10,12 +10,6 @@ function decode(string $pathToFile): array
         return ['File not found!'];
     }
 
-    $validExtensions = [
-        'json',
-        'yaml',
-        'yml'
-    ];
-
     $pathInfo = pathinfo($pathToFile);
     $extension = array_key_exists('extension', $pathInfo) ? $pathInfo['extension'] : '';
 
@@ -41,6 +35,7 @@ function getComparison(string $value, array $first = [], array $second = []): ar
                 ];
             } else {
                 return [
+                    'replaced_array',
                     [
                         'operator' => '-',
                         'key' => $value,
@@ -105,27 +100,36 @@ function generateKeys(array $firstArr, array $secondArr): array
     return arraySort($result);
 }
 
+function getReplacedArray(array $array)
+{
+    $newArray = [];
+    array_filter($array, function ($item) use (&$newArray) {
+        if (array_key_exists(0, $item) && $item[0] === 'replaced_array') {
+            $newArray[] = $item[1];
+            $newArray[] = $item[2];
+        } else {
+            $newArray[] = $item;
+        }
+
+    });
+    return $newArray;
+}
+
 function getResultToArray(array $filesKeys, array $firstFileArr, array $secondFileArr): array
 {
-    $result = array_reduce($filesKeys, function ($acc, $value) use ($firstFileArr, $secondFileArr) {
+    $result = array_map(function ($value) use ($firstFileArr, $secondFileArr) {
         if (array_key_exists($value, $firstFileArr) && array_key_exists($value, $secondFileArr)) {
             if (is_array($firstFileArr[$value]) && is_array($secondFileArr[$value])) {
                 $arrayKeys = generateKeys($firstFileArr[$value], $secondFileArr[$value]);
 
-                $acc[$value] = getComparison($value, $firstFileArr, $secondFileArr);
-                $acc[$value]['value'] = getResultToArray($arrayKeys, $firstFileArr[$value], $secondFileArr[$value]);
+                $acc = getComparison($value, $firstFileArr, $secondFileArr);
+                $acc['value'] = getResultToArray($arrayKeys, $firstFileArr[$value], $secondFileArr[$value]);
                 return $acc;
             }
         }
-        $res1 = getComparison($value, $firstFileArr, $secondFileArr);
+        return getComparison($value, $firstFileArr, $secondFileArr);
+    }, $filesKeys);
 
-        if (count($res1) === 2) {
-            $acc[] = $res1[0];
-            $acc[] = $res1[1];
-        } else {
-            $acc[] = $res1;
-        }
-        return $acc;
-    }, []);
-    return array_values($result);
+    $clearResult = array_values($result);
+    return getReplacedArray($clearResult);
 }
