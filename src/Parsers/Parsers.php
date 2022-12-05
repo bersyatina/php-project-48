@@ -14,9 +14,9 @@ function decode(string $pathToFile): array
     $extension = array_key_exists('extension', $pathInfo) ? '.' . $pathInfo['extension'] : '';
 
     switch ($extension) {
-        case $extension === 'json':
+        case 'json':
             return json_decode((string) file_get_contents($pathToFile), true);
-        case $extension === 'yaml' || 'yml':
+        case 'yaml' || 'yml':
             return Yaml::parseFile($pathToFile);
     }
     return ["Files with the extension '{$extension}' are not supported"];
@@ -78,16 +78,24 @@ function toString(mixed $value): string
     return trim(var_export($value, true), "'") === "NULL" ? "null" : trim(var_export($value, true), "'");
 }
 
-function array_sort(array $array): array
+function arraySort(array $array, array $resultArray = []): array
 {
-    usort($array, fn($a, $b) => $a <=> $b);
-    return $array;
+    if (count($array) > 0) {
+        $minValue = min($array);
+        $newArray = $array;
+        unset($newArray[array_search($minValue, $newArray)]);
+        $newResultArray = $resultArray;
+        $newResultArray[] = $minValue;
+        return arraySort($newArray, $newResultArray);
+    }
+    return $resultArray;
 }
 
 function generateKeys(array $firstArr, array $secondArr): array
 {
     $result = array_unique(array_merge(array_keys($firstArr), array_keys($secondArr)));
-    return array_sort($result);
+
+    return arraySort($result);
 }
 
 function getResultToArray(array $filesKeys, array $firstFileArr, array $secondFileArr): array

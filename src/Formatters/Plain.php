@@ -29,7 +29,7 @@ function getPlainData(array $array, string $path = ''): string
                     if (count($filter) !== 2) {
                         return "{$res} was removed";
                     } else {
-                        $nextItem = $array[array_search($item, $array, false) + 1];
+                        $nextItem = $array[(int) array_search($item, $array, true) + 1];
                         $nextValue = is_array($nextItem['value'])
                             ? "[complex value]"
                             : getPrimitiveData($nextItem['value']);
