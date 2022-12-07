@@ -6,8 +6,12 @@ use Symfony\Component\Yaml\Yaml;
 
 function decode(string $pathToFile): array
 {
+    /*
+     * set local path
+     * */
     $file = __DIR__ . "/" . $pathToFile;
-    if (!is_file($file)) {
+
+    if (!is_file($pathToFile) && !is_file($file)) {
         return ['File not found!'];
     }
 
