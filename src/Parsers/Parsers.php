@@ -87,8 +87,7 @@ function arraySort(array $array, array $resultArray = []): array
         $minValue = min($array);
         $newArray = $array;
         unset($newArray[array_search($minValue, $newArray, true)]);
-        $newResultArray = $resultArray;
-        $newResultArray[] = $minValue;
+        $newResultArray = array_merge($resultArray, [$minValue]);
         return arraySort($newArray, $newResultArray);
     }
     return $resultArray;
@@ -131,10 +130,12 @@ function getResultToArray(array $filesKeys, array $firstFileArr, array $secondFi
         if (array_key_exists($value, $firstFileArr) && array_key_exists($value, $secondFileArr)) {
             if (is_array($firstFileArr[$value]) && is_array($secondFileArr[$value])) {
                 $arrayKeys = generateKeys($firstFileArr[$value], $secondFileArr[$value]);
-
-                $acc = getComparison($value, $firstFileArr, $secondFileArr);
-                $acc['value'] = getResultToArray($arrayKeys, $firstFileArr[$value], $secondFileArr[$value]);
-                return $acc;
+                $comparison = getComparison($value, $firstFileArr, $secondFileArr);
+                return [
+                    'operator' => $comparison['operator'],
+                    'key' => $comparison['key'],
+                    'value' => getResultToArray($arrayKeys, $firstFileArr[$value], $secondFileArr[$value])
+                ];
             }
         }
         return getComparison($value, $firstFileArr, $secondFileArr);
