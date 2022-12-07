@@ -8,7 +8,7 @@ function decode(string $pathToFile): array
 {
     if (is_file($pathToFile)) {
         $file = $pathToFile;
-    } elseif(is_file(__DIR__ . "/" . $pathToFile)) {
+    } elseif (is_file(__DIR__ . "/" . $pathToFile)) {
         $file = __DIR__ . "/" . $pathToFile;
     } else {
         return ['File not found!'];
