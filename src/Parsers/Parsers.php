@@ -109,12 +109,12 @@ function getReplacedArray(array $array, array $replacedKeys): array
 
         $newArray = array_merge($firstArray, $array[$replacedKeys[0]]['replaced_array'], $secondArray);
 
-        $replacedKeys = array_map(function ($key) {
+        $newReplacedKeys = array_map(function ($key) {
             return is_int($key) ? $key + 1 : $key;
         }, $replacedKeys);
 
-        if (count($replacedKeys) > 1) {
-            $newArray = getReplacedArray($newArray, array_slice($replacedKeys, 1));
+        if (count($newReplacedKeys) > 1) {
+            return getReplacedArray($newArray, array_slice($newReplacedKeys, 1));
         }
         return $newArray;
     }
