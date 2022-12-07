@@ -2,7 +2,7 @@
 
 namespace Formatters\Stylish;
 
-use function Parsers\Parsers\getDataStatus;
+use function Parsers\Parsers\isComparisonArray;
 use function Parsers\Parsers\toString;
 
 function getResultToStylish(array $array, int $depth = 1): string
@@ -11,7 +11,7 @@ function getResultToStylish(array $array, int $depth = 1): string
         $currentIndent = str_repeat('  ', $depth);
         $longIdent = str_repeat('  ', $depth + 1);
         if (is_array($item)) {
-            if (!getDataStatus($item)) {
+            if (!isComparisonArray($item)) {
                 return $longIdent . array_search($item, $array, true) . ": " . getResultToStylish($item, $depth + 2);
             } else {
                 $line = "{$currentIndent}{$item['operator']} {$item['key']}: ";

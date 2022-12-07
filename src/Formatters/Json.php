@@ -2,13 +2,13 @@
 
 namespace Formatters\Json;
 
-use function Parsers\Parsers\getDataStatus;
+use function Parsers\Parsers\isComparisonArray;
 use function Parsers\Parsers\toString;
 
 function getJsonData(array $array, string $path = ''): string
 {
     $result = array_map(function ($item) use ($array, $path) {
-        if (getDataStatus($item)) {
+        if (isComparisonArray($item)) {
             $newPath = ltrim($path . '.' . $item['key'], '.');
             $filter = array_filter($array, fn($value) => $item['key'] === $value['key']);
             switch ($item['operator']) {

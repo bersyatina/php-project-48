@@ -2,7 +2,7 @@
 
 namespace Formatters\Plain;
 
-use function Parsers\Parsers\getDataStatus;
+use function Parsers\Parsers\isComparisonArray;
 use function Parsers\Parsers\toString;
 
 function getPrimitiveData(mixed $data): string
@@ -13,7 +13,7 @@ function getPrimitiveData(mixed $data): string
 function getPlainData(array $array, string $path = ''): string
 {
     $result = array_map(function ($item) use ($array, $path) {
-        if (getDataStatus($item)) {
+        if (isComparisonArray($item)) {
             $res = "'" . ltrim("{$path}.{$item['key']}", ".") . "'";
             $filter = array_filter($array, fn($value) => $item['key'] === $value['key']);
             switch ($item['operator']) {
