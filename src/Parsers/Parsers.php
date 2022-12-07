@@ -35,16 +35,17 @@ function getComparison(string $value, array $first = [], array $second = []): ar
                 ];
             } else {
                 return [
-                    'replaced_array',
-                    [
-                        'operator' => '-',
-                        'key' => $value,
-                        'value' => $first[$value]
-                    ],
-                    [
-                        'operator' => '+',
-                        'key' => $value,
-                        'value' => $second[$value]
+                    'replaced_array' => [
+                        [
+                            'operator' => '-',
+                            'key' => $value,
+                            'value' => $first[$value]
+                        ],
+                        [
+                            'operator' => '+',
+                            'key' => $value,
+                            'value' => $second[$value]
+                        ]
                     ]
                 ];
             }
@@ -100,18 +101,28 @@ function generateKeys(array $firstArr, array $secondArr): array
     return arraySort($result);
 }
 
-function getReplacedArray(array $array)
+function getReplacedArray(array $array, array $replacedKeys): array
 {
-    $newArray = [];
-    array_filter($array, function ($item) use (&$newArray) {
-        if (array_key_exists(0, $item) && $item[0] === 'replaced_array') {
-            $newArray[] = $item[1];
-            $newArray[] = $item[2];
-        } else {
-            $newArray[] = $item;
+    if ($replacedKeys[0] !== null) {
+        $firstArray = array_slice($array, 0, $replacedKeys[0]);
+        $secondArray = array_slice($array, $replacedKeys[0] + 1, count($array));
+
+        $newArray = array_merge($firstArray, $array[$replacedKeys[0]]['replaced_array'], $secondArray);
+
+        $replacedKeys = array_map(function ($key) {
+            return is_int($key) ? $key + 1 : $key;
+        }, $replacedKeys);
+
+        if (count($replacedKeys) > 1) {
+            $newArray = getReplacedArray($newArray, array_slice($replacedKeys, 1));
         }
-    });
-    return $newArray;
+        return $newArray;
+    }
+
+    if (count($replacedKeys) > 1) {
+        return getReplacedArray($array, array_slice($replacedKeys, 1));
+    }
+    return $array;
 }
 
 function getResultToArray(array $filesKeys, array $firstFileArr, array $secondFileArr): array
@@ -130,5 +141,11 @@ function getResultToArray(array $filesKeys, array $firstFileArr, array $secondFi
     }, $filesKeys);
 
     $clearResult = array_values($result);
-    return getReplacedArray($clearResult);
+
+    $replacedKeys = array_map(function ($item) use ($clearResult) {
+        if (array_key_exists('replaced_array', $item)) {
+            return array_search($item, $clearResult, true);
+        }
+    }, $clearResult);
+    return getReplacedArray($clearResult, $replacedKeys);
 }
