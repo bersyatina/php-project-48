@@ -6,7 +6,8 @@ use Symfony\Component\Yaml\Yaml;
 
 function decode(string $pathToFile): array
 {
-    if (!is_file($pathToFile)) {
+    $file = __DIR__ . "/" . $pathToFile;
+    if (!is_file($file)) {
         return ['File not found!'];
     }
 
@@ -15,10 +16,10 @@ function decode(string $pathToFile): array
 
     switch ($extension) {
         case 'json':
-            return json_decode((string) file_get_contents($pathToFile), true);
+            return json_decode((string) file_get_contents($file), true);
         case 'yaml':
         case 'yml':
-            return Yaml::parseFile($pathToFile);
+            return Yaml::parseFile($file);
     }
     return ["Files with the extension '{$extension}' are not supported"];
 }

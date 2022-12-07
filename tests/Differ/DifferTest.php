@@ -10,10 +10,10 @@ class DifferTest extends TestCase
 {
     public function testGenDiffFiles(): void
     {
-        $result1 = file_get_contents(dirname(__DIR__, 1) . '/fixtures/files/result');
-        $result2 = file_get_contents(dirname(__DIR__, 1) . '/fixtures/files/result2');
-        $result3 = file_get_contents(dirname(__DIR__, 1) . '/fixtures/files/result3');
-        $result4 = file_get_contents(dirname(__DIR__, 1) . '/fixtures/files/result4.json');
+        $result1 = file_get_contents(dirname(__DIR__, 1) . '/fixtures/result');
+        $result2 = file_get_contents(dirname(__DIR__, 1) . '/fixtures/result2');
+        $result3 = file_get_contents(dirname(__DIR__, 1) . '/fixtures/result3');
+        $result4 = file_get_contents(dirname(__DIR__, 1) . '/fixtures/result4.json');
 
         $firstFileJson = 'file1.json';
         $twoFileJson = 'file2.json';
