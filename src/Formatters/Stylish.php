@@ -2,8 +2,8 @@
 
 namespace Formatters\Stylish;
 
-use function Parsers\Parsers\isComparisonArray;
-use function Parsers\Parsers\toString;
+use function Differ\Differ\isComparisonArray;
+use function Differ\Differ\toString;
 
 function getResultToStylish(array $array, int $depth = 1): string
 {

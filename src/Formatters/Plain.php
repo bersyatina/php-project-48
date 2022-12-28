@@ -2,8 +2,8 @@
 
 namespace Formatters\Plain;
 
-use function Parsers\Parsers\isComparisonArray;
-use function Parsers\Parsers\toString;
+use function Differ\Differ\isComparisonArray;
+use function Differ\Differ\toString;
 
 function getPrimitiveData(mixed $data): string
 {

@@ -25,8 +25,8 @@ Options:
   --format <fmt>                Report format [default: stylish]
 DOCOPT;
 
-    $result = Docopt::handle($doc, array('version' => '1.0.0rc2'));
-    $firstFile = $result['<firstFile>'];
-    $secondFile = $result['<secondFile>'];
-    $format = $result['--format'];
+$result = Docopt::handle($doc, array('version' => '1.0.0rc2'));
+$firstFile = $result['<firstFile>'];
+$secondFile = $result['<secondFile>'];
+$format = $result['--format'];
 print_r(genDiff($firstFile, $secondFile, $format));
