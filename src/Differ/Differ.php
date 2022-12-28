@@ -7,9 +7,9 @@ use function Formatters\format;
 
 function genDiff(string $firstFile, string $secondFile, string $format = 'stylish'): string
 {
+
     $firstFileArr = decode($firstFile);
     $secondFileArr = decode($secondFile);
-
     $filesKeys = generateKeys($firstFileArr, $secondFileArr);
 
     $arrResult = getResultToArray($filesKeys, $firstFileArr, $secondFileArr);

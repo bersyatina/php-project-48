@@ -18,11 +18,16 @@ class DifferTest extends TestCase
      * @return void
      */
 
-    public function testGenDiff($file1, $file2, $result, $format = 'stylish'): void
+    public function testGenDiff(string $file1, string $file2, string $result, string $format = 'stylish'): void
     {
-        $expected = file_get_contents(dirname(__DIR__, 1) . "/fixtures/{$result}");
+        $expected = file_get_contents($this->getFilePath($result));
 
-        $this->assertEquals($expected, genDiff($file1, $file2, $format));
+        $this->assertEquals($expected, genDiff($this->getFilePath($file1), $this->getFilePath($file2), $format));
+    }
+
+    public function getFilePath(string $filename): string
+    {
+        return dirname(__DIR__, 1) . "/fixtures/{$filename}";
     }
 
     public function differProvider()
